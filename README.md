@@ -1,6 +1,6 @@
 # Leave Tracker CRM — Salesforce LWC App
 
-A Salesforce Lightning Web Components (LWC) application that lets employees submit and track leave requests, and allows managers to review and action their team's requests — all within a single custom Salesforce app.
+A Salesforce Lightning Web Components (LWC) application that lets employees submit and track leave requests, and allows managers to review and action their team's requests — all within a single Salesforce app.
 
 ## Screenshot
 
