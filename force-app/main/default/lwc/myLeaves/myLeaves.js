@@ -80,7 +80,7 @@ export default class MyLeaves extends LightningElement {
         } else if (new Date() > new Date(fields.From_Date__c)) {
             this.showToastMessage('From Date should not be less than Today', 'Error', 'error');
         } else {
-            this.refs.leaveRequestForm.submit(fields);
+            this.refs.leaveReqeustFrom.submit(fields);
         }
     }
 
