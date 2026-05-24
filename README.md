@@ -1,18 +1,104 @@
-# Salesforce DX Project: Next Steps
+# Leave Tracker CRM — Salesforce LWC App
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+A Salesforce Lightning Web Components (LWC) application that lets employees submit and track leave requests, and allows managers to review and action their team's requests — all within a single custom Salesforce app.
 
-## How Do You Plan to Deploy Your Changes?
+## Screenshot
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+![Leave Tracker App](./screenshot1.png)
 
-## Configure Your Salesforce DX Project
+> **My Leaves** tab showing leave requests with colour-coded statuses: green for Approved, yellow for Rejected, and white for Pending.
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+---
 
-## Read All About It
+## Features
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+- **My Leaves** — Employees can view all their own leave requests, see current status (Pending / Approved / Rejected), and add or edit requests.
+- **Leave Requests** — Managers see only the requests raised by their direct reports, enabling quick review and action.
+- **Status colour coding** — Rows are visually highlighted based on leave status for at-a-glance review.
+- **Inline editing** — Edit button on each row lets users update an existing leave request without navigating away.
+- **Sample data script** — An Apex class (`LeaveRequestSampleData`) is included to seed demo records into any org.
+
+---
+
+## Project Structure
+
+```
+force-app/main/default/
+├── classes/
+│   ├── LeaveRequstController.cls       # Apex controller — getMyLeaves & getLeaveRequests
+│   └── LeaveRequestSampleData.cls      # Anonymous-apex seed script
+├── lwc/
+│   ├── leaveTracker/                   # Parent container component (tabs)
+│   ├── leaveRequests/                  # Manager view — team leave requests
+│   └── myLeaves/                       # Employee view — personal leave requests
+├── objects/
+│   └── LeaveRequest__c/                # Custom object with all leave fields
+└── ...
+```
+
+---
+
+## Custom Object: `LeaveRequest__c`
+
+| Field | Type | Description |
+|---|---|---|
+| `Name` | Auto Number | Request ID (e.g. A0001) |
+| `From_Date__c` | Date | Leave start date |
+| `To_Date__c` | Date | Leave end date |
+| `Reason__c` | Text | Reason for leave |
+| `Status__c` | Picklist | Pending / Approved / Rejected |
+| `Manager_Comment__c` | Text | Manager's note on the request |
+| `User__c` | Lookup (User) | Employee who raised the request |
+
+---
+
+## Apex Controller
+
+`LeaveRequstController` exposes two `@AuraEnabled` methods:
+
+- **`getMyLeaves()`** — Returns all leave requests for the currently logged-in user, ordered by creation date (newest first).
+- **`getLeaveRequests()`** — Returns all leave requests for users whose manager is the currently logged-in user, enabling the manager view.
+
+---
+
+## Deployment
+
+### Prerequisites
+
+- [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) installed
+- A Salesforce org (Developer Edition, Sandbox, or Scratch Org)
+
+### Steps
+
+```bash
+# 1. Authenticate to your org
+sf org login web --alias myOrg
+
+# 2. Deploy the metadata
+sf project deploy start --target-org myOrg
+
+# 3. (Optional) Load sample data
+sf apex run --file scripts/apex/LeaveRequestSampleData.apex --target-org myOrg
+
+# 4. Open the app
+sf org open --target-org myOrg
+```
+
+After deployment, navigate to the **Leave Tracker App** from the App Launcher.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| UI | Lightning Web Components (LWC) |
+| Backend | Apex (with sharing) |
+| Data | Salesforce Custom Objects |
+| Platform | Salesforce (API v59+) |
+
+---
+
+## License
+
+This project is provided as-is for learning and demonstration purposes.
